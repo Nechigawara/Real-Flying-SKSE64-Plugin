@@ -46,6 +46,10 @@ void __fastcall hook_move(actor::physics_data *phys_data, move_params *params) {
 	if (!enable_physics)
 		return static_cast<move_t>(orig_move)(phys_data, params);
 
+	auto *player = actor::player();
+	if (player == nullptr || player->phys_data() != phys_data)
+		return static_cast<move_t>(orig_move)(phys_data, params);
+
 	// Read Skyrim engine variable "fJumpHeightMin"
 	//memcpy(&fJumpHeightMin, (void *)0x01E08320, 4); // TODO
 	fJumpHeightMin = *fJumpHeightMinAddr.GetPtr();
