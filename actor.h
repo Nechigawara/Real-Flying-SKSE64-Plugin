@@ -2,6 +2,7 @@
 
 #include "vec3.h"
 #include "skse64_common/Utilities.h"
+#include "address.h"
 
 struct actor
 {
@@ -60,7 +61,7 @@ struct actor
 
 	static actor *player()
 	{
-		static RelocPtr<actor*> _player(static_cast<uintptr_t>(0x0002F4DEF8));
+		static RelocPtr<actor*> _player(static_cast<uintptr_t>(OFF_PLAYER));
 		return *_player.GetPtr();
 	}
 };
