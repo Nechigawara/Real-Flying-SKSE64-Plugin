@@ -176,10 +176,6 @@ extern "C" __declspec(dllexport) bool SKSEPlugin_Query(const SKSEInterface * sks
 extern "C" __declspec(dllexport) bool SKSEPlugin_Load(void *skse) {
 	_MESSAGE("Load");
 	read_cfg();
-	if (MH_Initialize() != MH_OK) {
-		_ERROR("MinHook initialize failed.");
-		return false;
-	}
 	
 	if (MH_CreateHook(origin_move_function.GetPtr(), hook_move, &orig_move) != MH_OK) {
 		_ERROR("Hook Creation failed.");
@@ -195,4 +191,20 @@ extern "C" __declspec(dllexport) bool SKSEPlugin_Load(void *skse) {
 	//orig_change_camera = RenHook::Hook::Create(origin_change_camera_function.GetUIntPtr(), hook_change_camera);
 	//orig_load_game = RenHook::Hook::Create(origin_load_game_function.GetUIntPtr(), hook_load_game);
 	return true;
+}
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
+	switch (ul_reason_for_call) {
+	case DLL_PROCESS_ATTACH:
+		MH_Initialize();
+		break;
+	case DLL_THREAD_ATTACH:
+		break;
+	case DLL_THREAD_DETACH:
+		break;
+	case DLL_PROCESS_DETACH:
+		MH_Uninitialize();
+		break;
+	}
+	return TRUE;
 }
