@@ -4,6 +4,8 @@
 #include "skse64_common/Utilities.h"
 #include "address.h"
 
+
+
 struct actor
 {
 	struct physics_data

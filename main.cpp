@@ -8,9 +8,11 @@
 #include <skse64_common/Relocation.h>
 #include <skse64/PluginAPI.h>
 #include <ShlObj.h>
+
+#include "address.h"
 #include "vec3.h"
 #include "actor.h"
-#include "address.h"
+
 
 
 namespace cfg {
@@ -166,10 +168,20 @@ extern "C" __declspec(dllexport) bool SKSEPlugin_Query(const SKSEInterface * sks
 		return false;
 	}
 
+#ifdef RUNTIME_1_5_39
 	if (skse->runtimeVersion != RUNTIME_VERSION_1_5_39) {
 		_MESSAGE("Incompatible runtime version.");
 		return false;
 	}
+#endif // RUNTIME_1_5_39
+
+#ifdef RUNTIME_1_5_50
+	if (skse->runtimeVersion != MAKE_EXE_VERSION(1, 5, 50)) {
+		_MESSAGE("Incompatible runtime version.");
+		return false;
+	}
+#endif // RUNTIME_1_5_50
+	
 	return true;
 }
 
