@@ -12,7 +12,7 @@
 #include "address.h"
 #include "vec3.h"
 #include "actor.h"
-#include "versiondb.h"
+#include "versionlibdb.h"
 #include <vector>
 
 namespace cfg {

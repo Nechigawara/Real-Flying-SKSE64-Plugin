@@ -179,7 +179,7 @@ public:
 		Clear();
 
 		char fileName[256];
-		_snprintf_s(fileName, 256, "Data\\SKSE\\Plugins\\version-%d-%d-%d-%d.bin", major, minor, revision, build);
+		_snprintf_s(fileName, 256, "Data\\SKSE\\Plugins\\versionlib-%d-%d-%d-%d.bin", major, minor, revision, build);
 
 		std::ifstream file(fileName, std::ios::binary);
 		if (!file.good())
@@ -187,7 +187,7 @@ public:
 
 		int format = read<int>(file);
 
-		if (format != 1)
+		if (format != 2)
 			return false;
 
 		for (int i = 0; i < 4; i++)

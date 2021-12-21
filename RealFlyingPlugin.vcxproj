@@ -78,7 +78,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Documents\Visual Studio 2019\SKSE64\src;D:\Documents\Visual Studio 2019\SKSE64\src\skse64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Documents\Visual Studio 2019\SKSE64AE\;D:\Documents\Visual Studio 2019\SKSE64AE\skse64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -87,7 +87,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>skse64_common.lib;libMinHook.x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Documents\Visual Studio 2019\SKSE64\src\skse64\lib\Release;D:\Documents\Visual Studio 2019\SKSE64\src\skse64\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Documents\Visual Studio 2019\SKSE64\src\skse64\lib\Release;D:\Documents\Visual Studio 2019\SKSE64AE\skse64\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -105,13 +105,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Documents\Visual Studio 2019\SKSE64\src;D:\Documents\Visual Studio 2019\SKSE64\src\skse64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Documents\Visual Studio 2019\SKSE64AE\;D:\Documents\Visual Studio 2019\SKSE64AE\skse64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalDependencies>skse64_common.lib;libMinHook.x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Documents\Visual Studio 2019\SKSE64\src\skse64\lib\Debug;D:\Documents\Visual Studio 2019\SKSE64\src\skse64\x64\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Documents\Visual Studio 2019\SKSE64\src\skse64\lib\Debug;D:\Documents\Visual Studio 2019\SKSE64AE\skse64\x64\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -131,7 +131,7 @@
   <ItemGroup>
     <ClInclude Include="actor.h" />
     <ClInclude Include="address.h" />
-    <ClInclude Include="versiondb.h" />
+    <ClInclude Include="versionlibdb.h" />
     <ClInclude Include="MinHook.h" />
     <ClInclude Include="vec3.h" />
   </ItemGroup>
