@@ -2,9 +2,6 @@
 
 #include "vec3.h"
 #include "skse64_common/Utilities.h"
-#include "address.h"
-
-
 
 struct actor
 {
@@ -61,9 +58,9 @@ struct actor
 		return *(float*)((uintptr_t)(this) + 0x50); //0x50
 	}
 
-	static actor *player()
+	static actor *player(unsigned long long ptr)
 	{
-		static RelocPtr<actor*> _player(static_cast<uintptr_t>(OFF_PLAYER));
+		static RelocPtr<actor*> _player(static_cast<uintptr_t>(ptr));
 		return *_player.GetPtr();
 	}
 };
