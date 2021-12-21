@@ -27,7 +27,7 @@
     <ClInclude Include="address.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="versiondb.h">
+    <ClInclude Include="versionlibdb.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

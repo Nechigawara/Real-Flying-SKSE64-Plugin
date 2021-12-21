@@ -131,7 +131,7 @@
   <ItemGroup>
     <ClInclude Include="actor.h" />
     <ClInclude Include="address.h" />
-    <ClInclude Include="versiondb.h" />
+    <ClInclude Include="versionlibdb.h" />
     <ClInclude Include="MinHook.h" />
     <ClInclude Include="vec3.h" />
   </ItemGroup>
