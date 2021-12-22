@@ -11,7 +11,7 @@
 #include "address.h"
 #include "vec3.h"
 #include "actor.h"
-#include "versionlibdb.h"
+#include "versiondb.h"
 #include "version.h"  // VERSION_VERSTRING, VERSION_MAJOR
 
 #include "MinHook.h"
@@ -51,11 +51,11 @@ unsigned long long getOffset(unsigned long long ptr)
 
 bool LoadAll(std::vector<VersionDb*>& all)
 {
-	static int versions[] = { 317, 318, 323, 342 };
+	static int versions[] = { 3, 16, 23, 39, 50, 53, 62, 73, 80, 97, -1 };
 	for (int i = 0; versions[i] >= 0; i++)
 	{
 		VersionDb* db = new VersionDb();
-		if (!db->Load(1, 6, versions[i], 0))
+		if (!db->Load(1, 5, versions[i], 0))
 		{
 			delete db;
 			return false;
@@ -277,25 +277,24 @@ extern "C" {
 	{
 		SKSEPluginVersionData::kVersion,
 		REALFLY_VERSION_MAJOR,
-		"Realy Flying AE Plugin",
+		"Realy Flying SE Plugin",
 		"Nechigawara",
 		"",
-		SKSEPluginVersionData::kVersionIndependent_AddressLibraryPostAE,
+		SKSEPluginVersionData::kVersionIndependent_Signatures,
 		0,
 		0,
 	};
 
-	// If I'm feel like I want to make Dual SE-AE Plugin
-	/*bool SKSEPlugin_Query(const SKSEInterface* a_skse, PluginInfo* a_info)
+	bool SKSEPlugin_Query(const SKSEInterface* a_skse, PluginInfo* a_info)
 	{
 		gLog.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\RealFlyingPlugin.log");
 		gLog.SetPrintLevel(IDebugLog::kLevel_DebugMessage);
 		gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
 
-		_MESSAGE("RealFlyingAE v%s", REALFLY_VERSION_VERSTRING);
+		_MESSAGE("RealFlyingSE v%s", REALFLY_VERSION_VERSTRING);
 
 		a_info->infoVersion = PluginInfo::kInfoVersion;
-		a_info->name = "RealFlyingAE";
+		a_info->name = "RealFlyingSE";
 		a_info->version = REALFLY_VERSION_MAJOR;
 
 		if (a_skse->isEditor)
@@ -303,35 +302,18 @@ extern "C" {
 			_FATALERROR("[FATAL ERROR] Loaded in editor, marking as incompatible!");
 			return false;
 		}
-		else if (a_skse->runtimeVersion < RUNTIME_VERSION_1_6_317) {
+		else if (a_skse->runtimeVersion > RUNTIME_VERSION_1_5_97) {
 			_FATALERROR("[FATAL ERROR] Unsupported runtime version %08X!\n", a_skse->runtimeVersion);
 			return false;
 		}
 
-		_MESSAGE("[MESSAGE] Real Flying AE loaded");
+		_MESSAGE("[MESSAGE] Real Flying SE loaded on SE");
 
 		return true;
-	}*/
+	}
 
 	bool SKSEPlugin_Load(const SKSEInterface* a_skse)
 	{
-		gLog.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\RealFlyingPlugin.log");
-		gLog.SetPrintLevel(IDebugLog::kLevel_DebugMessage);
-		gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
-
-		_MESSAGE("RealFlyingAE v%s", REALFLY_VERSION_VERSTRING);
-
-		if (a_skse->runtimeVersion >= RUNTIME_VERSION_1_6_317) //1_6_317 was the first AE version
-		{
-			//logging is not set up in SKSEPlugin_Query on AE, so we set it up here
-			_MESSAGE("[MESSAGE] Real Flying AE loaded on AE");
-
-		}
-		else {
-			_FATALERROR("[FATAL ERROR] Unsupported runtime version %08X!\n", a_skse->runtimeVersion);
-			return false;
-		}
-
 		if (!isThisOK) {
 			_MESSAGE("Address Library not found or The Address this mod need not support");
 			return false;

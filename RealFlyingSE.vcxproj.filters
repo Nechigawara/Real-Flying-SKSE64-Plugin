@@ -32,7 +32,7 @@
     <ClInclude Include="include\vec3.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\versionlibdb.h">
+    <ClInclude Include="include\versiondb.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
