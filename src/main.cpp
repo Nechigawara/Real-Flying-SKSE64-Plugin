@@ -51,7 +51,7 @@ unsigned long long getOffset(unsigned long long ptr)
 
 bool LoadAll(std::vector<VersionDb*>& all)
 {
-	static int versions[] = { 317, 318, 323, 342 };
+	static int versions[] = { 317, 318, 323, 342, -1 };
 	for (int i = 0; versions[i] >= 0; i++)
 	{
 		VersionDb* db = new VersionDb();
