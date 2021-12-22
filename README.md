@@ -4,7 +4,7 @@ Due to a AE Compliling problem. I decide to refactor the codes base on Ryan Exam
 
 ## Build Dependencies
 * [SKSE64](https://skse.silverlock.org)
-* [Minhook] https://github.com/TsudaKageyu/minhook
+* [Minhook](https://github.com/TsudaKageyu/minhook)
 
 ## Build Instructions
 To Be Continued
