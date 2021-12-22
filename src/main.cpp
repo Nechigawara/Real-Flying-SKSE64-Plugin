@@ -1,23 +1,24 @@
-#include <Windows.h>
+﻿#include "common/IDebugLog.h"  // IDebugLog
+#include "skse64_common/skse_version.h"  // RUNTIME_VERSION
+#include "skse64_common/Relocation.h"
+#include "skse64/PluginAPI.h"  // SKSEInterface, PluginInfo
 
-#include <fstream>
+#include <ShlObj.h>  // CSIDL_MYDOCUMENTS
+
 #include <string>
-
-#include "MinHook.h"
-#include <skse64_common/skse_version.h>
-#include <skse64_common/Relocation.h>
-#include <skse64/PluginAPI.h>
-#include <ShlObj.h>
+#include <vector>
 
 #include "address.h"
 #include "vec3.h"
 #include "actor.h"
 #include "versionlibdb.h"
-#include <vector>
+#include "version.h"  // VERSION_VERSTRING, VERSION_MAJOR
 
-namespace cfg {
+#include "MinHook.h"
+
+namespace cfg{
 	float ForwardSpeedMulti = 5.1f;
-	float FallingSpeedMulti = 2./3;
+	float FallingSpeedMulti = 2. / 3;
 	float LiftUpSpeedMulti = 10.0f;
 	float LiftDownSpeedMulti = 1.0f;
 };
@@ -30,6 +31,8 @@ public:
 	vec3 input;
 	float max_speed;
 };
+
+static PluginHandle g_pluginHandle = kPluginHandle_Invalid;
 
 VersionDb db;
 unsigned long long loc_OFF_FRAME_DELTA = 0;
@@ -48,11 +51,11 @@ unsigned long long getOffset(unsigned long long ptr)
 
 bool LoadAll(std::vector<VersionDb*>& all)
 {
-	static int versions[] = { 3, 16, 23, 39, 50, 53, 62, 73, 80, 97, -1 };
+	static int versions[] = { 317, 318, 323, 342 };
 	for (int i = 0; versions[i] >= 0; i++)
 	{
 		VersionDb* db = new VersionDb();
-		if (!db->Load(1, 5, versions[i], 0))
+		if (!db->Load(1, 6, versions[i], 0))
 		{
 			delete db;
 			return false;
@@ -159,20 +162,17 @@ bool isFlyingActive;
 bool isFlyingUp;
 bool isFlyingDown;
 
-IDebugLog gLog;
-PluginHandle g_pluginHandle = kPluginHandle_Invalid;
-
 using move_t = void(__fastcall*)(actor::physics_data*, move_params*);
 RelocPtr<move_t> origin_move_function(loc_OFF_MOVE);
 LPVOID orig_move;
 //std::shared_ptr<RenHook::Hook> orig_move;
 
-void __fastcall hook_move(actor::physics_data *phys_data, move_params *params) {
+void __fastcall hook_move(actor::physics_data* phys_data, move_params* params) {
 	if (!enable_physics) {
 		return static_cast<move_t>(orig_move)(phys_data, params);
 	}
 
-	auto *player = actor::player(loc_OFF_PLAYER);
+	auto* player = actor::player(loc_OFF_PLAYER);
 
 	if (player == nullptr || player->phys_data() != phys_data) {
 		return static_cast<move_t>(orig_move)(phys_data, params);
@@ -231,7 +231,7 @@ RelocAddr<load_game_t> origin_load_game_function(loc_OFF_LOAD_GAME);
 LPVOID orig_load_game;
 
 //NOT Actually hooked right now because SKSE64 hooked it too, I think I'll just use the SKSE64 API
-bool __fastcall hook_load_game(void *thisptr, void *a1, bool a2) {
+bool __fastcall hook_load_game(void* thisptr, void* a1, bool a2) {
 	velocity = vec3();
 	return static_cast<load_game_t>(orig_load_game)(thisptr, a1, a2);
 }
@@ -259,73 +259,101 @@ void read_cfg() {
 		else if (strcmp(key, "ForwardSpeedMulti") == 0) {
 			cfg::ForwardSpeedMulti = value;
 		}
-		else if (strcmp(key, "FallingSpeedMulti") == 0){
+		else if (strcmp(key, "FallingSpeedMulti") == 0) {
 			cfg::FallingSpeedMulti = value;
 		}
-		else if (strcmp(key, "LiftUpSpeedMulti") == 0){
+		else if (strcmp(key, "LiftUpSpeedMulti") == 0) {
 			cfg::LiftUpSpeedMulti = value;
 		}
-		else if (strcmp(key, "LiftDownSpeedMulti") == 0){
+		else if (strcmp(key, "LiftDownSpeedMulti") == 0) {
 			cfg::LiftDownSpeedMulti = value;
 		}
 	}
 }
 
-extern "C" __declspec(dllexport) bool SKSEPlugin_Query(const SKSEInterface * skse, PluginInfo *info) {
-	gLog.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\RealFlyingPlugin.log");
+// SKSE DLL Build
+extern "C" {
+	__declspec(dllexport) SKSEPluginVersionData SKSEPlugin_Version =
+	{
+		SKSEPluginVersionData::kVersion,
+		REALFLY_VERSION_MAJOR,
+		"Realy Flying AE Plugin",
+		"Nechigawara",
+		"",
+		SKSEPluginVersionData::kVersionIndependent_AddressLibraryPostAE,
+		0,
+		0,
+	};
 
-	info->infoVersion = 3;
-	info->version = 3;
-	info->name = "Real Flying Plugin";
-	
-	g_pluginHandle = skse->GetPluginHandle();
+	// If I'm feel like I want to make Dual SE-AE Plugin
+	/*bool SKSEPlugin_Query(const SKSEInterface* a_skse, PluginInfo* a_info)
+	{
+		gLog.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\RealFlyingPlugin.log");
+		gLog.SetPrintLevel(IDebugLog::kLevel_DebugMessage);
+		gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
 
-	if (skse->isEditor) {
-		_MESSAGE("Can't load this plugin in editor.");
-		return false;
+		_MESSAGE("RealFlyingAE v%s", REALFLY_VERSION_VERSTRING);
+
+		a_info->infoVersion = PluginInfo::kInfoVersion;
+		a_info->name = "RealFlyingAE";
+		a_info->version = REALFLY_VERSION_MAJOR;
+
+		if (a_skse->isEditor)
+		{
+			_FATALERROR("[FATAL ERROR] Loaded in editor, marking as incompatible!");
+			return false;
+		}
+		else if (a_skse->runtimeVersion < RUNTIME_VERSION_1_6_317) {
+			_FATALERROR("[FATAL ERROR] Unsupported runtime version %08X!\n", a_skse->runtimeVersion);
+			return false;
+		}
+
+		_MESSAGE("[MESSAGE] Real Flying AE loaded");
+
+		return true;
+	}*/
+
+	bool SKSEPlugin_Load(const SKSEInterface* a_skse)
+	{
+		gLog.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\RealFlyingPlugin.log");
+		gLog.SetPrintLevel(IDebugLog::kLevel_DebugMessage);
+		gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
+
+		_MESSAGE("RealFlyingAE v%s", REALFLY_VERSION_VERSTRING);
+
+		if (a_skse->runtimeVersion >= RUNTIME_VERSION_1_6_317) //1_6_317 was the first AE version
+		{
+			//logging is not set up in SKSEPlugin_Query on AE, so we set it up here
+			_MESSAGE("[MESSAGE] Real Flying AE loaded on AE");
+
+		}
+		else {
+			_FATALERROR("[FATAL ERROR] Unsupported runtime version %08X!\n", a_skse->runtimeVersion);
+			return false;
+		}
+
+		if (!isThisOK) {
+			_MESSAGE("Address Library not found or The Address this mod need not support");
+			return false;
+		}
+
+		// Read Config
+		read_cfg();
+
+		if (MH_CreateHook(origin_move_function.GetPtr(), hook_move, &orig_move) != MH_OK) {
+			_ERROR("Hook Creation failed.");
+			return false;
+		}
+
+		if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK) {
+			_ERROR("Apply Hook failed.");
+			return false;
+		}
+
+		return true;
 	}
 
-//#ifdef RUNTIME_1_5_39
-//	if (skse->runtimeVersion != RUNTIME_VERSION_1_5_39) {
-//		_MESSAGE("Incompatible runtime version.");
-//		return false;
-//	}
-//#endif // RUNTIME_1_5_39
-//
-//#ifdef RUNTIME_1_5_50
-//	if (skse->runtimeVersion != MAKE_EXE_VERSION(1, 5, 50)) {
-//		_MESSAGE("Incompatible runtime version.");
-//		return false;
-//	}
-//#endif // RUNTIME_1_5_50
-	
-	return true;
-}
-
-extern "C" __declspec(dllexport) bool SKSEPlugin_Load(void *skse) {
-	_MESSAGE("Load");
-	read_cfg();
-
-	if (!isThisOK) {
-		_MESSAGE("Address Library not found or The Address this mod need not support");
-		return false;
-	}
-	
-	if (MH_CreateHook(origin_move_function.GetPtr(), hook_move, &orig_move) != MH_OK) {
-		_ERROR("Hook Creation failed.");
-		return false;
-	}
-
-	if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK) {
-		_ERROR("Apply Hook failed.");
-		return false;
-	}
-
-	//orig_move = RenHook::Hook::Create(origin_move_function.GetUIntPtr(), hook_move);
-	//orig_change_camera = RenHook::Hook::Create(origin_change_camera_function.GetUIntPtr(), hook_change_camera);
-	//orig_load_game = RenHook::Hook::Create(origin_load_game_function.GetUIntPtr(), hook_load_game);
-	return true;
-}
+};
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
 	switch (ul_reason_for_call) {
