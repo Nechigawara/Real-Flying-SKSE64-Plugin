@@ -18,11 +18,11 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "FileDescription", "Real Flying AE"
+            VALUE "FileDescription", "Real Flying SE"
 			VALUE "FileVersion", REALFLY_VERSION_VERSTRING
-            VALUE "InternalName", "RealFlyingAE"
+            VALUE "InternalName", "RealFlyingSE"
             VALUE "LegalCopyright", "MIT License"
-            VALUE "ProductName", "RealFlyingAE"
+            VALUE "ProductName", "RealFlyingSE"
 			VALUE "ProductVersion", REALFLY_VERSION_VERSTRING
         END
     END

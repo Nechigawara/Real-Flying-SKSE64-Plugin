@@ -1,4 +1,8 @@
-﻿#include "common/IDebugLog.h"  // IDebugLog
+﻿//==================================================================================================
+// This is SE VERSION
+//==================================================================================================
+
+#include "common/IDebugLog.h"  // IDebugLog
 #include "skse64_common/skse_version.h"  // RUNTIME_VERSION
 #include "skse64_common/Relocation.h"
 #include "skse64/PluginAPI.h"  // SKSEInterface, PluginInfo
@@ -49,93 +53,52 @@ unsigned long long getOffset(unsigned long long ptr)
 	return b_offset;
 }
 
-bool LoadAll(std::vector<VersionDb*>& all)
-{
-	static int versions[] = { 3, 16, 23, 39, 50, 53, 62, 73, 80, 97, -1 };
-	for (int i = 0; versions[i] >= 0; i++)
-	{
-		VersionDb* db = new VersionDb();
-		if (!db->Load(1, 5, versions[i], 0))
-		{
-			delete db;
-			return false;
-		}
-		all.push_back(db);
-	}
-	return true;
-}
-
-bool ExistsInAll(std::vector<VersionDb*>& all, unsigned long long id)
-{
-	unsigned long long result = 0;
-	for (auto db : all)
-	{
-		if (!db->FindOffsetById(id, result))
-			return false;
-	}
-	return true;
-}
-
-void FreeAll(std::vector<VersionDb*>& all)
-{
-	for (auto db : all)
-		delete db;
-	all.clear();
-}
-
 bool IsOk()
 {
-	std::vector<VersionDb*> all;
-	if (!LoadAll(all))
-	{
-		_FATALERROR("Failed to load one or more version databases for current executable!");
-		FreeAll(all);
-		return false;
-	}
-
-	if (!ExistsInAll(all, OFF_FRAME_DELTA))
-	{
-		_FATALERROR(OFF_FRAME_DELTA + " does not exist in all versions of the database!");
-		FreeAll(all);
-		return false;
-	}
-	if (!ExistsInAll(all, OFF_FJUMPHEIGHTMIN))
-	{
-		_FATALERROR(OFF_FJUMPHEIGHTMIN + " does not exist in all versions of the database!");
-		FreeAll(all);
-		return false;
-	}
-	if (!ExistsInAll(all, OFF_PLAYER))
-	{
-		_FATALERROR(OFF_PLAYER + " does not exist in all versions of the database!");
-		FreeAll(all);
-		return false;
-	}
-	if (!ExistsInAll(all, OFF_MOVE))
-	{
-		_FATALERROR(OFF_MOVE + " does not exist in all versions of the database!");
-		FreeAll(all);
-		return false;
-	}
-	if (!ExistsInAll(all, OFF_SET_CAMERA))
-	{
-		_FATALERROR(OFF_SET_CAMERA + " does not exist in all versions of the database!");
-		FreeAll(all);
-		return false;
-	}
-	if (!ExistsInAll(all, OFF_LOAD_GAME))
-	{
-		_FATALERROR(OFF_LOAD_GAME + " does not exist in all versions of the database!");
-		FreeAll(all);
-		return false;
-	}
-
-	// Free First
-	FreeAll(all);
+	unsigned long long b_offset = 0;
 
 	// Load Current Version
 	db.Load();
 
+	// Index Check
+	if (!db.FindOffsetById(OFF_FRAME_DELTA, b_offset))
+	{
+		_FATALERROR(OFF_FRAME_DELTA + " does not exist in all versions of the database!");
+		db.Clear();
+		return false;
+	}
+	if (!db.FindOffsetById(OFF_FJUMPHEIGHTMIN, b_offset))
+	{
+		_FATALERROR(OFF_FJUMPHEIGHTMIN + " does not exist in all versions of the database!");
+		db.Clear();
+		return false;
+	}
+	if (!db.FindOffsetById(OFF_PLAYER, b_offset))
+	{
+		_FATALERROR(OFF_PLAYER + " does not exist in all versions of the database!");
+		db.Clear();
+		return false;
+	}
+	if (!db.FindOffsetById(OFF_MOVE, b_offset))
+	{
+		_FATALERROR(OFF_MOVE + " does not exist in all versions of the database!");
+		db.Clear();
+		return false;
+	}
+	if (!db.FindOffsetById(OFF_SET_CAMERA, b_offset))
+	{
+		_FATALERROR(OFF_SET_CAMERA + " does not exist in all versions of the database!");
+		db.Clear();
+		return false;
+	}
+	if (!db.FindOffsetById(OFF_LOAD_GAME, b_offset))
+	{
+		_FATALERROR(OFF_LOAD_GAME + " does not exist in all versions of the database!");
+		db.Clear();
+		return false;
+	}
+
+	// Set Address
 	loc_OFF_FRAME_DELTA = getOffset(OFF_FRAME_DELTA);
 	loc_OFF_FJUMPHEIGHTMIN = getOffset(OFF_FJUMPHEIGHTMIN);
 	loc_OFF_PLAYER = getOffset(OFF_PLAYER);
@@ -143,8 +106,9 @@ bool IsOk()
 	loc_OFF_SET_CAMERA = getOffset(OFF_SET_CAMERA);
 	loc_OFF_LOAD_GAME = getOffset(OFF_LOAD_GAME);
 
-	// Free Again
-	FreeAll(all);
+	// Clear
+	db.Clear();
+
 	// Ok!
 	return true;
 }
