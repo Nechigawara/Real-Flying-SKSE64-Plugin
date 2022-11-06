@@ -1,4 +1,4 @@
-﻿//==================================================================================================
+//==================================================================================================
 // This is AE VERSION
 //==================================================================================================
 
@@ -238,13 +238,26 @@ void read_cfg() {
 
 // SKSE DLL Build
 extern "C" {
-	__declspec(dllexport) SKSEPluginVersionData SKSEPlugin_Version =
+	/*__declspec(dllexport) SKSEPluginVersionData SKSEPlugin_Version =
 	{
 		SKSEPluginVersionData::kVersion,
 		REALFLY_VERSION_MAJOR,
 		"Realy Flying AE Plugin",
 		"Nechigawara",
 		"",
+		SKSEPluginVersionData::kVersionIndependent_AddressLibraryPostAE,
+		0,
+		0,
+	};*/
+
+	__declspec(dllexport) SKSEPluginVersionData SKSEPlugin_Version =
+	{
+		SKSEPluginVersionData::kVersion,
+		REALFLY_VERSION_MAJOR,
+		"Realy Flying AE Plugin (1.6.629+)",
+		"Nechigawara",
+		"", // I'm not giving you my email address, leave any support requests on github or nexusmods
+		SKSEPluginVersionData::kVersionIndependentEx_NoStructUse,
 		SKSEPluginVersionData::kVersionIndependent_AddressLibraryPostAE,
 		0,
 		0,
